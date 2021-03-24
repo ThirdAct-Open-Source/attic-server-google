@@ -44,8 +44,8 @@
   },
   "homepage": "https://github.com/znetstar/attic-server-ssh#readme",
   "peerDependencies": {
-    "@znetstar/attic-common": "^1.0.7",
-    "@znetstar/attic-server": "^1.0.9"
+    "@znetstar/attic-common": "^2",
+    "@znetstar/attic-server": "^2"
   },
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
