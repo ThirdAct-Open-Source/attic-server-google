@@ -23,19 +23,11 @@ interface IIdentityEntityModel{
 
 type IIdentityEntity = IIdentityEntityModel&IIdentityEntityBase&IIdentity;
 
-export interface IWeChatAccessTokenExt {
-    otherFields: {
-        openid: string;
-    }
-}
-
-export type IWeChatAccessToken = IAccessToken&IWeChatAccessTokenExt;
-
-export async function getWeChatIdentity(accessToken: IWeChatAccessToken): Promise<IIdentityEntity> {
-    let resp = await fetch(`https://api.weixin.qq.com/sns/userinfo?openid=${accessToken.otherFields.openid}&access_token=${accessToken.token}`, {
-        // headers: {
-        //     'Authorization': `Bearer ${accessToken.token}`
-        // }
+export async function googleGoogleIdentity(accessToken: IAccessToken): Promise<IIdentityEntity> {
+    let resp = await fetch(`https://www.googleapis.com/userinfo/v2/me`, {
+        headers: {
+            'Authorization': `Bearer ${accessToken.token}`
+        }
     });
 
     let body:  any;
@@ -44,26 +36,26 @@ export async function getWeChatIdentity(accessToken: IWeChatAccessToken): Promis
     catch (err) { e2 = err; }
 
     if (resp.status !== 200) {
-        throw new GenericError(`Could not locate WeChat identity`, 93001, 403, (
+        throw new GenericError(`Could not locate Google identity`, 2001, 403, (
             body || e2
         ) as any as IError);
     }
 
 
     let fields: IIdentityEntity = {
-        firstName: body.nickname,
+        firstName: body.given_name,
+        lastName: body.family_name,
         clientName: accessToken.clientName,
-        lastName: '',
         phone: '',
-        email: `${body.openid}.wechat@profile.etomon.com`,
+        email: body.email || `${body.id}.google@profile.etomon.com`,
         otherFields: body,
         source: {
-            href: `https://api.weixin.qq.com/sns/userinfo?openid=${body.openid}`
+            href: `https://www.googleapis.com/userinfo/v2/${body.id}`
         },
         type: 'IdentityEntity',
         client: accessToken.client,
         user: null,
-        externalId: body.openid,
+        externalId: body.id,
         id: null,
         _id: null
     };
@@ -73,5 +65,5 @@ export async function getWeChatIdentity(accessToken: IWeChatAccessToken): Promis
 
 
 export async function init(ctx: ApplicationContextBase) {
-    ctx.on(`Client.getIdentityEntity.wechat.provider`, getWeChatIdentity);
+    ctx.on(`Client.getIdentityEntity.google.provider`, googleGoogleIdentity);
 }
