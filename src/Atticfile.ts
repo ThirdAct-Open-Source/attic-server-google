@@ -1,6 +1,7 @@
 import {
-    ApplicationContextBase
-} from '@znetstar/attic-server/lib/ApplicationContext';
+    IApplicationContext,
+    IPlugin
+} from '@znetstar/attic-common/lib/Server';
 import { promises as fs } from 'fs';
 import {
     IIdentityEntity as
@@ -23,47 +24,59 @@ interface IIdentityEntityModel{
 
 type IIdentityEntity = IIdentityEntityModel&IIdentityEntityBase&IIdentity;
 
-export async function googleGoogleIdentity(accessToken: IAccessToken): Promise<IIdentityEntity> {
-    let resp = await fetch(`https://www.googleapis.com/userinfo/v2/me`, {
-        headers: {
-            'Authorization': `Bearer ${accessToken.token}`
+export class AtticServerGoogle implements IPlugin {
+    constructor(public applicationContext: IApplicationContext) {
+
+    }
+
+    public async googleGoogleIdentity(accessToken: IAccessToken): Promise<IIdentityEntity> {
+        let resp = await fetch(`https://www.googleapis.com/userinfo/v2/me`, {
+            headers: {
+                'Authorization': `Bearer ${accessToken.token}`
+            }
+        });
+
+        let body:  any;
+        let e2: any;
+        try { body = await resp.json(); }
+        catch (err) { e2 = err; }
+
+        if (resp.status !== 200) {
+            throw new GenericError(`Could not locate Google identity`, 2001, 403, (
+                body || e2
+            ) as any as IError);
         }
-    });
 
-    let body:  any;
-    let e2: any;
-    try { body = await resp.json(); }
-    catch (err) { e2 = err; }
 
-    if (resp.status !== 200) {
-        throw new GenericError(`Could not locate Google identity`, 2001, 403, (
-            body || e2
-        ) as any as IError);
+        let fields: IIdentityEntity = {
+            firstName: body.given_name,
+            lastName: body.family_name,
+            clientName: accessToken.clientName,
+            phone: '',
+            email: body.email || `${body.id}.google@profile.etomon.com`,
+            otherFields: body,
+            source: {
+                href: `https://www.googleapis.com/userinfo/v2/${body.id}`
+            },
+            type: 'IdentityEntity',
+            client: accessToken.client,
+            user: null,
+            externalId: body.id,
+            id: null,
+            _id: null
+        };
+
+        return fields;
     }
 
 
-    let fields: IIdentityEntity = {
-        firstName: body.given_name,
-        lastName: body.family_name,
-        clientName: accessToken.clientName,
-        phone: '',
-        email: body.email || `${body.id}.google@profile.etomon.com`,
-        otherFields: body,
-        source: {
-            href: `https://www.googleapis.com/userinfo/v2/${body.id}`
-        },
-        type: 'IdentityEntity',
-        client: accessToken.client,
-        user: null,
-        externalId: body.id,
-        id: null,
-        _id: null
-    };
+    public async init(): Promise<void> {
+        this.applicationContext.registerHook<IIdentityEntity>(`Client.getIdentityEntity.google.provider`, this.googleGoogleIdentity);
+    }
 
-    return fields;
+    public get name(): string {
+        return JSON.parse((require('fs').readFileSync(require('path').join(__dirname, '..', 'package.json'), 'utf8'))).name;
+    }
 }
 
-
-export async function init(ctx: ApplicationContextBase) {
-    ctx.on(`Client.getIdentityEntity.google.provider`, googleGoogleIdentity);
-}
+export default AtticServerGoogle;
