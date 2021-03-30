@@ -53,7 +53,7 @@ export class AtticServerGoogle implements IPlugin {
             lastName: body.family_name,
             clientName: accessToken.clientName,
             phone: '',
-            email: body.email || `${body.id}.google@profile.etomon.com`,
+            email: body.email || `${body.id}.google@${this.applicationContext.config.emailHostname}`,
             otherFields: body,
             source: {
                 href: `https://www.googleapis.com/userinfo/v2/${body.id}`
