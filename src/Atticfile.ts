@@ -16,6 +16,7 @@ import { GenericError } from '@znetstar/attic-common/lib/Error/GenericError'
 import fetch from "node-fetch";
 import {IError} from "@znetstar/attic-common/lib/Error/IError";
 import {IIdentity} from "@znetstar/attic-common";
+import * as _ from 'lodash';
 
 interface IIdentityEntityModel{
     externalId: string;
@@ -53,7 +54,7 @@ export class AtticServerGoogle implements IPlugin {
             lastName: body.family_name,
             clientName: accessToken.clientName,
             phone: '',
-            email: body.email || `${body.id}.google@${this.applicationContext.config.emailHostname}`,
+            email: `${body.id}.google@${_.get(this, 'applicationContext.config.emailHostname') || process.env.EMAIL_HOSTNAME}`,
             otherFields: body,
             source: {
                 href: `https://www.googleapis.com/userinfo/v2/${body.id}`
