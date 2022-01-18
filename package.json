@@ -1,6 +1,6 @@
 {
-    "name": "@etomon/attic-server-google",
-    "version": "3.0.2",
+    "name": "@thirdact/attic-server-google",
+    "version": "3.3.0",
     "description": "A plugin for oauth with google on attic",
     "main": "lib/Atticfile.js",
     "publishConfig": {
@@ -13,7 +13,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/EtomonUSA/attic-server-google.git"
+        "url": "git+https://github.com/ThirdAct-Open-Source/attic-server-google.git"
     },
     "contributors": [
         {
@@ -25,16 +25,21 @@
             "name": "Etomon Team",
             "email": "open-source@etomon.com",
             "url": "https://etomon.com"
+        },
+        {
+            "name": "Third Act Team",
+            "email": "open-source@etomon.com",
+            "url": "https://thirdact.digital"
         }
     ],
     "license": "AGPL-3.0",
     "bugs": {
-        "url": "https://github.com/znetstar/attic-server-google/issues"
+        "url": "https://github.com/ThirdAct-Open-Source/attic-server-google/issues"
     },
     "devDependencies": {
         "@types/bcrypt": "^3.0.0",
         "@types/node-fetch": "^2.5.8",
-        "@znetstar/attic-common": "^3.1.3",
+        "@znetstar/attic-common": "^3.19.0",
         "grunt": "^1.3.0",
         "grunt-contrib-clean": "^2.0.0",
         "grunt-contrib-copy": "^1.0.0",
@@ -45,7 +50,7 @@
         "typedoc": "^0.20.33",
         "typescript": "^4.2.3"
     },
-    "homepage": "https://github.com/znetstar/attic-server-google#readme",
+    "homepage": "https://github.com/ThirdAct-Open-Source/attic-server-google#readme",
     "peerDependencies": {
         "@znetstar/attic-common": "^3"
     },

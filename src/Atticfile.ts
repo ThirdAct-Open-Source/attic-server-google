@@ -67,6 +67,9 @@ export class AtticServerGoogle implements IPlugin {
             _id: null
         };
 
+        if (body.picture) {
+          fields.photo = Buffer.from(await (await fetch(body.picture)).arrayBuffer());
+        }
         return fields;
     }
 
