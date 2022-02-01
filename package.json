@@ -1,6 +1,6 @@
 {
     "name": "@thirdact/attic-server-google",
-    "version": "3.4.0",
+    "version": "3.4.1",
     "description": "A plugin for oauth with google on attic",
     "main": "lib/Atticfile.js",
     "publishConfig": {
@@ -28,7 +28,7 @@
         },
         {
             "name": "Third Act Team",
-            "email": "open-source@etomon.com",
+            "email": "zach@thirdact.digital",
             "url": "https://thirdact.digital"
         }
     ],
