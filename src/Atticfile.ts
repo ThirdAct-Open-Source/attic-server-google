@@ -17,6 +17,7 @@ import fetch from "node-fetch";
 import {IError} from "@znetstar/attic-common/lib/Error/IError";
 import {IIdentity} from "@znetstar/attic-common";
 import * as _ from 'lodash';
+import * as URL from "url";
 
 interface IIdentityEntityModel{
     externalId: string;
@@ -76,6 +77,11 @@ export class AtticServerGoogle implements IPlugin {
 
     public async init(): Promise<void> {
         this.applicationContext.registerHook<IIdentityEntity>(`Client.getIdentityEntity.google.provider`, this.googleGoogleIdentity);
+        this.applicationContext.registerHook<any>('AuthMiddleware.auth.google.authorize.token', async (opts: { provider: any, params: URL.URLSearchParams, fetchOpts: any }): Promise<any> => {
+          let qq: any = {};
+          for (let [k,v] of opts.params.entries()) qq[k] = v;
+          return { fetchOpts: { ...opts.fetchOpts, headers: { ...opts.fetchOpts.headers, 'Content-Type': 'application/json' },  body: JSON.stringify(qq) } };
+        });
     }
 
     public get name(): string {
